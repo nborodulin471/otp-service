@@ -1,4 +1,4 @@
-package ru.opt.service.otpservice;
+package ru.otp.service;
 
 import org.junit.jupiter.api.Test;
 
