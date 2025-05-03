@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import ru.otp.service.model.OtpStatus;
 import ru.otp.service.model.dto.OtpDto;
 import ru.otp.service.service.OtpService;
 
@@ -27,11 +28,9 @@ public class UserOtpController {
     }
 
     @GetMapping("/validate")
-    public ResponseEntity<?> validate(@PathVariable long operationId, @RequestParam String code) {
-        if (otpService.validate(operationId, code)) {
-            return ResponseEntity.ok().build();
-        }
-
-        return ResponseEntity.badRequest().build();
+    public ResponseEntity<OtpStatus> validate(@PathVariable long operationId, @RequestParam String code) {
+        return ResponseEntity.ok(
+                otpService.validate(operationId, code)
+        );
     }
 }

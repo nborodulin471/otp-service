@@ -1,4 +1,4 @@
 package ru.otp.service.model.dto;
 
-public class OtpConfigDto {
+public record OtpConfigDto(long ttl, int length) {
 }

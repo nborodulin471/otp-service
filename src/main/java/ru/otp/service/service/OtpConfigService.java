@@ -2,15 +2,33 @@ package ru.otp.service.service;
 
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import ru.otp.service.model.dto.OtpConfigDto;
+import ru.otp.service.model.mappers.OtpConfigMapper;
+import ru.otp.service.repository.OtpConfigRepository;
 
 @Service
+@RequiredArgsConstructor
 public class OtpConfigService {
-    public OtpConfigDto edit(OtpConfigDto otpCodeConfigDTO) {
-        return null;
+
+    private final OtpConfigRepository otpConfigRepository;
+    private final OtpConfigMapper otpConfigMapper;
+    private final AuthenticationFetcherService authenticationFetcherService;
+
+    public OtpConfigDto edit(long id, OtpConfigDto otpCodeConfigDto) {
+        var config = otpConfigRepository.findById(id)
+                .orElseThrow();
+
+        config.setTtl(otpCodeConfigDto.ttl());
+        config.setLength(otpCodeConfigDto.length());
+
+        return otpConfigMapper.mapToDto(otpConfigRepository.save(config));
     }
 
     public OtpConfigDto getCurrentConfig() {
-        return null;
+        var config = otpConfigRepository.findByUser(authenticationFetcherService.getUser())
+                .orElseThrow();
+
+        return otpConfigMapper.mapToDto(config);
     }
 }
