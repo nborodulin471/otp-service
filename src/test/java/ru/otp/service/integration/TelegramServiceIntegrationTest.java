@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 @Disabled
 @SpringBootTest
-class TelegramServiceRealIntegrationTest {
+class TelegramServiceIntegrationTest {
     @Autowired
     private TelegramUserRepository telegramUserRepository;
 

@@ -45,3 +45,30 @@
 Приложение должно использовать систему сборки Gradle или Maven.
 
 # Тесты
+
+В качестве тестов для проверки функционала я использовал интеграционные тесты, т.к тесты условиями задачи вообще не требовались,
+то в некоторых местах я отступил от общепринятых правил исключительно для того, чтобы проверить приложение. Конечно, при 
+других обстоятельствах я бы уделил им больше внимания =)
+
+## Телеграм
+Отправка отп через телеграм. Для тестирования данного функционала разработан тест [TelegramServiceIntegrationTest.java](src%2Ftest%2Fjava%2Fru%2Fotp%2Fservice%2Fintegration%2FTelegramServiceIntegrationTest.java) 
+
+Для данного теста нужно получить ид бота
+
+Для этого мной был зарегистрирован чат бот 
+
+![img_1.png](img_1.png)
+
+и получен его чат ид
+
+https://api.telegram.org/bot7679210896:AAFItzK_C2xoQAEnZVJJQZimPUNI-hf2WlM/getUpdates
+``
+{"ok":true,"result":[{"update_id":291886601,
+"message":{"message_id":1,"from":{"id":978297678,"is_bot":false,"first_name":"\u041d\u0438\u043a\u0438\u0442\u0430","last_name":"\u0411\u043e\u0440\u043e\u0434\u0443\u043b\u0438\u043d","username":"nborodulin","language_code":"ru"},"chat":{"id":978297678,"first_name":"\u041d\u0438\u043a\u0438\u0442\u0430","last_name":"\u0411\u043e\u0440\u043e\u0434\u0443\u043b\u0438\u043d","username":"nborodulin","type":"private"},"date":1746472437,"text":"/start","entities":[{"offset":0,"length":6,"type":"bot_command"}]}}]}
+``
+Вот результаты прохождения теста указанного выше
+![img.png](img.png)
+
+## Авторизация
+
+Для авторизации используется jwt токен, на нее также написаны интеграционные тесты [AuthTests.java](src%2Ftest%2Fjava%2Fru%2Fotp%2Fservice%2Fintegration%2FAuthTests.java)
