@@ -13,7 +13,7 @@ public class OtpConfigService {
 
     private final OtpConfigRepository otpConfigRepository;
     private final OtpConfigMapper otpConfigMapper;
-    private final AuthenticationFetcherService authenticationFetcherService;
+    private final UserService userService;
 
     public OtpConfigDto edit(long id, OtpConfigDto otpCodeConfigDto) {
         var config = otpConfigRepository.findById(id)
@@ -26,8 +26,7 @@ public class OtpConfigService {
     }
 
     public OtpConfigDto getCurrentConfig() {
-        var config = otpConfigRepository.findByUser(authenticationFetcherService.getUser())
-                .orElseThrow();
+        var config = otpConfigRepository.findByUser(userService.getCurrentUser()).orElseThrow();
 
         return otpConfigMapper.mapToDto(config);
     }
