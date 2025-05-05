@@ -3,7 +3,7 @@ package ru.otp.service.service;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import ru.otp.service.model.OtpStatus;
+import ru.otp.service.model.enums.OtpStatus;
 import ru.otp.service.model.dto.OtpDto;
 import ru.otp.service.model.entity.OtpEntity;
 import ru.otp.service.model.mappers.OtpMapper;

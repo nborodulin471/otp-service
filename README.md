@@ -2,7 +2,7 @@
 
 Для запуска требуется запущенная БД postgres. Для этого в docker поднимаем БД с помощью
 
-```docker run --name otp-service -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=moneywatch -p 5432:5432 -d postgres:latest```
+```docker run --name otp-service -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=otp -p 5432:5432 -d postgres:latest```
 
 # Требования
 
@@ -43,3 +43,5 @@
 Необходимо реализовать механизм, который будет отмечать просроченные OTP-коды раз в определенный интервал времени и присваивать им статус EXPIRED.
 Необходимо настроить логирование в приложении с помощью любой понравившейся вам библиотеки из модуля про логирование.
 Приложение должно использовать систему сборки Gradle или Maven.
+
+# Тесты

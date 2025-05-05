@@ -18,7 +18,7 @@ public class OtpConfigEntity {
     private Long id;
 
     @OneToOne
-    private UserEntity user;
+    private User user;
 
     private long ttl;
 

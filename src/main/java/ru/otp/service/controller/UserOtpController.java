@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import ru.otp.service.model.OtpStatus;
+import ru.otp.service.model.enums.OtpStatus;
 import ru.otp.service.model.dto.OtpDto;
 import ru.otp.service.service.OtpService;
 

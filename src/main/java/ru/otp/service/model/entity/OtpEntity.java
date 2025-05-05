@@ -11,7 +11,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
-import ru.otp.service.model.OtpStatus;
+import ru.otp.service.model.enums.OtpStatus;
 
 import java.time.LocalDateTime;
 
@@ -28,7 +28,7 @@ public class OtpEntity {
     private OperationEntity operation;
 
     @OneToOne
-    private UserEntity userId;
+    private User userId;
 
     private String code;
 

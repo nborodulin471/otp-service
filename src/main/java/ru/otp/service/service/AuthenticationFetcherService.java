@@ -1,10 +1,11 @@
 package ru.otp.service.service;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import ru.otp.service.model.entity.UserEntity;
+import ru.otp.service.model.entity.User;
 import ru.otp.service.repository.UserRepository;
 
 @Service
@@ -13,10 +14,14 @@ public class AuthenticationFetcherService {
 
     private final UserRepository userRepository;
 
-    public UserEntity getUser() {
+    public User getUser() {
         var name = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(name)
                 .orElseThrow();
+    }
+
+    public Authentication getAuthenticatedUser() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 
 }
