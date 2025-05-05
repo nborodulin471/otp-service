@@ -72,3 +72,9 @@ https://api.telegram.org/bot7679210896:AAFItzK_C2xoQAEnZVJJQZimPUNI-hf2WlM/getUp
 ## Авторизация
 
 Для авторизации используется jwt токен, на нее также написаны интеграционные тесты [AuthTests.java](src%2Ftest%2Fjava%2Fru%2Fotp%2Fservice%2Fintegration%2FAuthTests.java)
+
+## Срок жизни токенов
+
+Для проверка срока жизни токенов создан шедулер ExpirationService и написан тест на проверку того, что он срабатывает
+
+[ExpirationServiceIntegrationTest.java](src%2Ftest%2Fjava%2Fru%2Fotp%2Fservice%2Fintegration%2FExpirationServiceIntegrationTest.java)
