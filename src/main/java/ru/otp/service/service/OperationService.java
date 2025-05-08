@@ -2,38 +2,56 @@ package ru.otp.service.service;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import ru.otp.service.model.dto.OperationDto;
 import ru.otp.service.model.entity.OperationEntity;
 import ru.otp.service.repository.OperationRepository;
+import ru.otp.service.repository.UserRepository;
 
-@Slf4j
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class OperationService {
 
     private final OperationRepository operationRepository;
+    private final UserRepository userRepository;
 
-    public OperationEntity getBy(long operationId) {
-        log.info("Fetching operation with ID: {}", operationId);
-        return operationRepository
-                .findById(operationId)
-                .orElseThrow(() -> {
-                    log.warn("Operation with ID: {} not found", operationId);
-                    return new RuntimeException("Operation not found");
-                });
+    public OperationEntity createOperation(OperationDto request, String username) {
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        var operation = new OperationEntity();
+        operation.setSum(request.sum());
+        operation.setDestination(request.destination());
+        operation.setOperationType(request.operationType());
+        operation.setStatus("PENDING");
+        operation.setInitiator(username);
+        operation.setDescription(request.description());
+        operation.setUser(user);
+        operation.setCreatedAt(LocalDateTime.now());
+
+        return operationRepository.save(operation);
     }
 
-    public OperationDto create(OperationDto operationDto) {
-        log.info("Creating new operation with details: {}", operationDto);
-        // Здесь должна быть логика создания операции
-        // Например, сохранение операции в базе данных
-        // OperationEntity operationEntity = new OperationEntity();
-        // operationEntity.setDetails(operationDto.getDetails());
-        // operationRepository.save(operationEntity);
+    public OperationEntity edit(Long operationId, OperationDto request, String username) {
+        var operation = operationRepository.findByIdAndInitiator(operationId, username)
+                .orElseThrow(() -> new EntityNotFoundException("Operation not found"));
 
-        // Возвращаем созданный объект DTO
-        return new OperationDto(); // Замените на фактическую логику создания
+        operation.setStatus(request.status());
+        operation.setDescription(request.description());
+
+        return operationRepository.save(operation);
+    }
+
+    public List<OperationEntity> getUserOperations(String username) {
+        return operationRepository.findAllByInitiatorOrderByCreatedAtDesc(username);
+    }
+
+    public OperationEntity getOperationDetails(Long id, String username) {
+        return operationRepository.findByIdAndInitiator(id, username)
+                .orElseThrow(() -> new EntityNotFoundException("Operation not found"));
     }
 }

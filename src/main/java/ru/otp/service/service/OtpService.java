@@ -4,10 +4,11 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.otp.service.model.enums.OtpStatus;
 import ru.otp.service.model.dto.OtpDto;
 import ru.otp.service.model.entity.OtpEntity;
+import ru.otp.service.model.enums.OtpStatus;
 import ru.otp.service.model.mappers.OtpMapper;
+import ru.otp.service.repository.OperationRepository;
 import ru.otp.service.repository.OtpRepository;
 
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class OtpService {
 
-    private final OperationService operationService;
+    private final OperationRepository operationRepository;
     private final OtpConfigService otpConfigService;
     private final OtpRepository otpRepository;
     private final OtpMapper otpMapper;
@@ -31,7 +32,7 @@ public class OtpService {
         var code = generateRandomCode(config.length());
 
         var otpCode = new OtpEntity();
-        otpCode.setOperation(operationService.getBy(operationId));
+        otpCode.setOperation(operationRepository.findById(operationId).orElseThrow());
         otpCode.setCode(code);
         otpCode.setOtpStatus(OtpStatus.ACTIVE);
         otpCode.setExpiresAt(LocalDateTime.now().plusSeconds(config.ttl()));

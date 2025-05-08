@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.otp.service.exception.OtpAuthException;
 import ru.otp.service.model.dto.UserDto;
+import ru.otp.service.model.enums.Role;
 import ru.otp.service.model.mappers.UserMapper;
 import ru.otp.service.repository.UserRepository;
 import ru.otp.service.service.UserService;
@@ -36,8 +37,14 @@ public class AuthenticationService {
             throw new OtpAuthException("Пользователь с таким именем уже существует");
         }
 
-        user.setPassword(encoder.encode(user.getPassword()));
-        userRepository.save(userMapper.toEntity(user));
+        var userEntity = userMapper.toEntity(user);
+
+        if (userEntity.getRole() == Role.ROLE_ADMIN && userRepository.findByRole(userEntity.getRole()).size() > 1) {
+            throw new OtpAuthException("Администратор может быть только один");
+        }
+
+        userEntity.setPassword(encoder.encode(user.getPassword()));
+        userRepository.save(userEntity);
 
         log.info("User registered successfully with username: {}", user.getUsername());
     }

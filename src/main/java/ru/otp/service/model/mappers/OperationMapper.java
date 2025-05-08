@@ -8,6 +8,7 @@ import ru.otp.service.model.entity.OperationEntity;
 @Component
 public class OperationMapper {
     public OperationDto mapToDto(OperationEntity entity) {
-        return new OperationDto();
+        return new OperationDto(entity.getSum(), entity.getDestination(), entity.getOperationType(),
+                entity.getStatus(), entity.getInitiator(), entity.getDescription());
     }
 }
