@@ -14,15 +14,15 @@ class EmailServiceIntegrationTest {
 
     @Test
     void testSendEmail() throws Exception {
-        // Arrange
+        // Given
         String code = "123456";
         String destination = "nborodulin471@gmail.com";
         String template = "Your verification code is {code}. Please enter it to verify your account.";
 
-        // Act
+        // When
         emailService.send(code, destination, template);
 
-        // Assert
+        // Then
         // Ждем получения письма (макс 5 секунд)
 
     }
