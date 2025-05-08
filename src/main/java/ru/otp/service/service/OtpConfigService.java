@@ -36,6 +36,7 @@ public class OtpConfigService {
 
         config.setTtl(otpCodeConfigDto.ttl());
         config.setLength(otpCodeConfigDto.length());
+        config.setDeliveryType(DeliveryType.valueOf(otpCodeConfigDto.deliveryType()));
 
         var updatedConfig = otpConfigRepository.save(config);
         log.info("OTP config with ID: {} updated successfully", id);
@@ -63,6 +64,5 @@ public class OtpConfigService {
     private OtpConfigEntity getDefaultOrpConfig(User currentUser) {
         return new OtpConfigEntity(null, currentUser, ttl, length, DeliveryType.FILE);
     }
-
 
 }
