@@ -16,7 +16,7 @@ class SmsServiceTest {
     @Test
     void testSendSms() {
         try {
-            smsService.send("123456", "79161234567", "Код: {code}");
+            smsService.send("Your verification code 123456", "79161234567");
             Assertions.assertTrue(true, "SMS отправлено успешно");
         } catch (Exception e) {
             Assertions.fail("Ошибка отправки SMS: " + e.getMessage());

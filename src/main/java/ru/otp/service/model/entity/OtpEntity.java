@@ -28,10 +28,12 @@ public class OtpEntity {
     private OperationEntity operation;
 
     @OneToOne
-    private User userId;
+    private User user;
 
+    @Column(nullable = false)
     private String code;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private OtpStatus otpStatus;
 

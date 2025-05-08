@@ -13,18 +13,16 @@ class EmailServiceIntegrationTest {
     private EmailService emailService;
 
     @Test
-    void testSendEmail() throws Exception {
+    void testSendEmail() {
         // Given
-        String code = "123456";
         String destination = "nborodulin471@gmail.com";
-        String template = "Your verification code is {code}. Please enter it to verify your account.";
+        String template = "Your verification code 123456";
 
         // When
-        emailService.send(code, destination, template);
+        emailService.send(template, destination);
 
         // Then
         // Ждем получения письма (макс 5 секунд)
-
     }
 
 }

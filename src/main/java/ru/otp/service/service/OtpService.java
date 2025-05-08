@@ -10,9 +10,9 @@ import ru.otp.service.model.enums.OtpStatus;
 import ru.otp.service.model.mappers.OtpMapper;
 import ru.otp.service.repository.OperationRepository;
 import ru.otp.service.repository.OtpRepository;
+import ru.otp.service.service.distribution.DeliveryManager;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Random;
 
 @Slf4j
@@ -22,28 +22,37 @@ public class OtpService {
 
     private final OperationRepository operationRepository;
     private final OtpConfigService otpConfigService;
+    private final UserService userService;
     private final OtpRepository otpRepository;
     private final OtpMapper otpMapper;
+    private final DeliveryManager deliveryManager;
 
     private final Random random = new Random();
 
     public OtpDto generate(long operationId) {
         var config = otpConfigService.getCurrentConfig();
-        var code = generateRandomCode(config.length());
+        var code = generateRandomCode(config.getLength());
+
+        var operation = operationRepository.findById(operationId).orElseThrow();
 
         var otpCode = new OtpEntity();
-        otpCode.setOperation(operationRepository.findById(operationId).orElseThrow());
+        otpCode.setOperation(operation);
         otpCode.setCode(code);
         otpCode.setOtpStatus(OtpStatus.ACTIVE);
-        otpCode.setExpiresAt(LocalDateTime.now().plusSeconds(config.ttl()));
+        otpCode.setExpiresAt(LocalDateTime.now().plusSeconds(config.getTtl()));
+        otpCode.setUser(userService.getCurrentUser());
 
         log.info("Generated OTP code: {} for operation ID: {}", code, operationId);
+
+        deliveryManager.getDeliveryService(config.getDeliveryType())
+                .send("Your verification code " + code, operation.getDestination());
+
         return otpMapper.mapToDto(otpRepository.save(otpCode));
     }
 
     public OtpStatus validate(long operationId, String code) {
         log.info("Validating OTP code: {} for operation ID: {}", code, operationId);
-        Optional<OtpEntity> otpCodeOpt = otpRepository.findByCode(code);
+        var otpCodeOpt = otpRepository.findByCode(code);
 
         if (otpCodeOpt.isEmpty()) {
             log.warn("OTP code not found: {}", code);
@@ -63,15 +72,7 @@ public class OtpService {
             return OtpStatus.EXPIRED;
         }
 
-        if (otpCode.getOtpStatus() == OtpStatus.ACTIVE) {
-            log.info("OTP code is still active: {}", code);
-            return OtpStatus.INACTIVE;
-        }
-
-        otpCode.setOtpStatus(OtpStatus.USED);
-        otpRepository.save(otpCode);
-        log.info("OTP code used: {}", code);
-        return OtpStatus.USED;
+        return otpCode.getOtpStatus();
     }
 
     private String generateRandomCode(Integer length) {

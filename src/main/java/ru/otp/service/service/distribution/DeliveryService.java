@@ -1,7 +1,9 @@
 package ru.otp.service.service.distribution;
 
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.otp.service.model.entity.DeliveryType;
 
 public interface DeliveryService {
-    void send(String code, String destination, String template) throws TelegramApiException;
+    void send(String message, String destination);
+
+    DeliveryType getDeliveryType();
 }

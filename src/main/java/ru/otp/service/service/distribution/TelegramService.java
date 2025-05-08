@@ -8,6 +8,7 @@ import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.otp.service.config.TelegramConfig;
+import ru.otp.service.model.entity.DeliveryType;
 import ru.otp.service.repository.TelegramUserRepository;
 
 @Slf4j
@@ -22,7 +23,7 @@ public class TelegramService extends DefaultAbsSender implements DeliveryService
     }
 
     @Override
-    public void send(String code, String destination, String template) throws TelegramApiException {
+    public void send(String text, String destination) {
         log.info("Attempting to send message to Telegram user: {}", destination);
 
         var telegramUser = telegramUserRepository.findByUsername(destination)
@@ -32,7 +33,6 @@ public class TelegramService extends DefaultAbsSender implements DeliveryService
                 });
 
         var chatId = telegramUser.getChatId();
-        var text = template.replace("{code}", code);
 
         var message = new SendMessage();
         message.setChatId(chatId);
@@ -44,7 +44,12 @@ public class TelegramService extends DefaultAbsSender implements DeliveryService
             log.info("Message sent successfully to chat ID: {}", chatId);
         } catch (TelegramApiException e) {
             log.error("Failed to send message to chat ID: {}. Error: {}", chatId, e.getMessage());
-            throw e;
+            throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public DeliveryType getDeliveryType() {
+        return DeliveryType.TELEGRAM;
     }
 }

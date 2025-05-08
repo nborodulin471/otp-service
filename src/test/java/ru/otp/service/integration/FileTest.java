@@ -38,19 +38,16 @@ class FileTest {
     @Test
     void shouldWriteCodeToFile() throws IOException {
         // Given
-        var code = "123456";
         var destination = "79161234567";
-        var template = "Ваш код: {code}";
 
         // When
-        fileService.send(code, destination, template);
+        fileService.send("Your verification code 123456", destination);
 
         // Then
         assertTrue(Files.exists(logFilePath), "Файл должен быть создан");
 
         var lines = Files.readAllLines(logFilePath);
         assertEquals(1, lines.size(), "Должна быть одна запись в файле");
-        assertTrue(lines.get(0).contains(code), "Запись должна содержать код");
         assertTrue(lines.get(0).contains(destination), "Запись должна содержать номер");
     }
 
@@ -61,7 +58,7 @@ class FileTest {
 
         // When
         for (String code : codes) {
-            fileService.send(code, "79160000000", "Code: {code}");
+            fileService.send("Your verification code " + code, "79160000000");
         }
 
         // Then

@@ -15,7 +15,7 @@ public class UserMapper {
         }
         return new UserDto(
                 user.getUsername(),
-                null,
+                null, // уберем, чтобы не светить пароль
                 user.getRole().name()
         );
     }

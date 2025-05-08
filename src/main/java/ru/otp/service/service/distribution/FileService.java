@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import ru.otp.service.exception.LogFileWriteException;
+import ru.otp.service.model.entity.DeliveryType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -47,9 +48,8 @@ public class FileService implements DeliveryService {
     }
 
     @Override
-    public void send(String code, String destination, String template) {
-        String message = template.replace("{code}", code);
-        String logEntry = formatLogEntry(code, destination, message);
+    public void send(String message, String destination) {
+        var logEntry = formatLogEntry(destination, message);
 
         try (BufferedWriter writer = Files.newBufferedWriter(logFilePath,
                 StandardCharsets.UTF_8,
@@ -62,8 +62,8 @@ public class FileService implements DeliveryService {
         }
     }
 
-    private String formatLogEntry(String code, String destination, String message) {
-        StringBuilder sb = new StringBuilder();
+    private String formatLogEntry(String destination, String message) {
+        var sb = new StringBuilder();
 
         if (includeTimestamp) {
             sb.append("[")
@@ -72,9 +72,13 @@ public class FileService implements DeliveryService {
         }
 
         sb.append("Destination: ").append(destination)
-                .append(" | Code: ").append(code)
                 .append(" | Message: '").append(message).append("'");
 
         return sb.toString();
+    }
+
+    @Override
+    public DeliveryType getDeliveryType() {
+        return DeliveryType.FILE;
     }
 }

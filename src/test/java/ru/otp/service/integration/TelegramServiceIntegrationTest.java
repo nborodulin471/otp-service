@@ -32,8 +32,7 @@ class TelegramServiceIntegrationTest {
 
     private static final String TEST_USERNAME = "testuser";
     private static final long TEST_CHAT_ID = 978297678;
-    private static final String TEST_CODE = "123456";
-    private static final String TEST_TEMPLATE = "Your code is {code}";
+    private static final String TEST_MESSAGE = "Your verification code 123456";
 
     @BeforeEach
     void setUp() {
@@ -48,7 +47,7 @@ class TelegramServiceIntegrationTest {
         telegramUserRepository.save(testUser);
 
         assertDoesNotThrow(() -> {
-            telegramService.send(TEST_CODE, TEST_USERNAME, TEST_TEMPLATE);
+            telegramService.send(TEST_MESSAGE, TEST_USERNAME);
         });
 
         // проверяем, что сообщение было отправлено
@@ -57,7 +56,7 @@ class TelegramServiceIntegrationTest {
     @Test
     void send_ShouldThrowException_WhenUserNotFound() {
         var exception = assertThrows(RuntimeException.class, () -> {
-            telegramService.send(TEST_CODE, "nonexistentuser", TEST_TEMPLATE);
+            telegramService.send(TEST_MESSAGE, "nonexistentuser");
         });
 
         assertEquals("Пользователь должен сначала запустить чат", exception.getMessage());
@@ -70,6 +69,6 @@ class TelegramServiceIntegrationTest {
         testUser.setChatId(TEST_CHAT_ID);
         telegramUserRepository.save(testUser);
 
-        telegramService.send(TEST_CODE, TEST_USERNAME, TEST_TEMPLATE);
+        telegramService.send(TEST_MESSAGE, TEST_USERNAME);
     }
 }

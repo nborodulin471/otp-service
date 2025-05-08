@@ -1,10 +1,14 @@
 package ru.otp.service.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.otp.service.model.dto.OtpConfigDto;
+import ru.otp.service.model.entity.DeliveryType;
+import ru.otp.service.model.entity.OtpConfigEntity;
+import ru.otp.service.model.entity.User;
 import ru.otp.service.model.mappers.OtpConfigMapper;
 import ru.otp.service.repository.OtpConfigRepository;
 
@@ -16,6 +20,11 @@ public class OtpConfigService {
     private final OtpConfigRepository otpConfigRepository;
     private final OtpConfigMapper otpConfigMapper;
     private final UserService userService;
+
+    @Value("${otp.ttl}")
+    public long ttl;
+    @Value("${otp.length}")
+    public int length;
 
     public OtpConfigDto edit(long id, OtpConfigDto otpCodeConfigDto) {
         log.info("Editing OTP config with ID: {}", id);
@@ -33,15 +42,27 @@ public class OtpConfigService {
         return otpConfigMapper.mapToDto(updatedConfig);
     }
 
-    public OtpConfigDto getCurrentConfig() {
+    public OtpConfigEntity getCurrentConfig() {
         var currentUser = userService.getCurrentUser();
         log.info("Fetching current OTP config for user: {}", currentUser.getUsername());
-        var config = otpConfigRepository.findByUser(currentUser)
-                .orElseThrow(() -> {
-                    log.warn("No OTP config found for user: {}", currentUser.getUsername());
-                    return new RuntimeException("OTP config not found for current user");
-                });
+        var config = otpConfigRepository.findByUser(currentUser);
 
-        return otpConfigMapper.mapToDto(config);
+        return config.orElseGet(() -> otpConfigRepository.save(getDefaultOrpConfig(currentUser)));
+
     }
+
+    public OtpConfigDto create(OtpConfigDto otpConfigDto) {
+        return otpConfigMapper.mapToDto(
+                otpConfigRepository.save(
+                        otpConfigMapper.mapToEntity(otpConfigDto)
+                )
+        );
+    }
+
+
+    private OtpConfigEntity getDefaultOrpConfig(User currentUser) {
+        return new OtpConfigEntity(null, currentUser, ttl, length, DeliveryType.FILE);
+    }
+
+
 }

@@ -39,7 +39,7 @@ public class AuthenticationService {
 
         var userEntity = userMapper.toEntity(user);
 
-        if (userEntity.getRole() == Role.ROLE_ADMIN && userRepository.findByRole(userEntity.getRole()).size() > 1) {
+        if (user.getRole().equals(Role.ROLE_ADMIN.toString()) && !userRepository.findByRole(Role.ROLE_ADMIN).isEmpty()) {
             throw new OtpAuthException("Администратор может быть только один");
         }
 

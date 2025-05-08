@@ -11,6 +11,7 @@ import org.smpp.pdu.SubmitSM;
 import org.smpp.pdu.WrongLengthOfStringException;
 import ru.otp.service.config.SmppConfig;
 import ru.otp.service.exception.DeliveryException;
+import ru.otp.service.model.entity.DeliveryType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -36,10 +37,10 @@ public class SmsService implements DeliveryService {
     }
 
     @Override
-    public void send(String code, String destination, String template) {
+    public void send(String message, String destination) {
         try {
             validateDestination(destination);
-            var submitSM = createSubmitSm(code, destination, template);
+            var submitSM = createSubmitSm(message, destination);
             var response = smppSession.submit(submitSM);
 
             if (response.getCommandStatus() != 0) {
@@ -53,10 +54,9 @@ public class SmsService implements DeliveryService {
         }
     }
 
-    private SubmitSM createSubmitSm(String code, String destination, String template)
+    private SubmitSM createSubmitSm(String message, String destination)
             throws WrongLengthOfStringException {
 
-        var message = template.replace("{code}", code);
         var submitSM = new SubmitSM();
         submitSM.setSourceAddr(properties.getSourceAddr());
         submitSM.setDestAddr(destination);
@@ -71,6 +71,11 @@ public class SmsService implements DeliveryService {
         if (!destination.matches("^7\\d{10}$")) {
             throw new IllegalArgumentException("Invalid phone number format");
         }
+    }
+
+    @Override
+    public DeliveryType getDeliveryType() {
+        return DeliveryType.SMS;
     }
 }
 
