@@ -78,3 +78,12 @@ https://api.telegram.org/bot7679210896:AAFItzK_C2xoQAEnZVJJQZimPUNI-hf2WlM/getUp
 Для проверка срока жизни токенов создан шедулер ExpirationService и написан тест на проверку того, что он срабатывает
 
 [ExpirationServiceIntegrationTest.java](src%2Ftest%2Fjava%2Fru%2Fotp%2Fservice%2Fintegration%2FExpirationServiceIntegrationTest.java)
+
+
+## Отправка через почту
+
+Для проверки отправки через почту реализован [EmailServiceIntegrationTest.java](src%2Ftest%2Fjava%2Fru%2Fotp%2Fservice%2Fintegration%2FEmailServiceIntegrationTest.java)
+
+В тесте нужно поменять адрес назначения на актуальный, чтобы получить письмо на свою почту
+
+![img_2.png](img_2.png)
