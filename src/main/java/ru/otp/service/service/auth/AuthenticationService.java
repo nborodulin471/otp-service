@@ -6,7 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
+import ru.otp.service.exception.OtpAuthException;
 import ru.otp.service.model.dto.UserDto;
 import ru.otp.service.model.mappers.UserMapper;
 import ru.otp.service.repository.UserRepository;
@@ -15,6 +16,7 @@ import ru.otp.service.service.UserService;
 /**
  * Сервис авторизации.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -26,18 +28,23 @@ public class AuthenticationService {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    public UserDto registerNewUser(UserDto user) {
+    public void registerNewUser(UserDto user) {
+        log.info("Registering new user with username: {}", user.getUsername());
+
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new RuntimeException("Пользователь с таким именем уже существует");
+            log.warn("User with username: {} already exists", user.getUsername());
+            throw new OtpAuthException("Пользователь с таким именем уже существует");
         }
 
         user.setPassword(encoder.encode(user.getPassword()));
-        var res = userRepository.save(userMapper.toEntity(user));
+        userRepository.save(userMapper.toEntity(user));
 
-        return userMapper.toDto(res);
+        log.info("User registered successfully with username: {}", user.getUsername());
     }
 
     public String login(String username, String password) {
+        log.info("User attempting to log in with username: {}", username);
+
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 username,
                 password
@@ -47,6 +54,9 @@ public class AuthenticationService {
                 .userDetailsService()
                 .loadUserByUsername(username);
 
-        return jwtTokenProvider.generateToken(user);
+        String token = jwtTokenProvider.generateToken(user);
+        log.info("User logged in successfully with username: {}", username);
+
+        return token;
     }
 }
